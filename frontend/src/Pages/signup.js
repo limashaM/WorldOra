@@ -25,7 +25,7 @@ const Register = () => {
         password,
       };
 
-      Axios.post('http://localhost:3001/api/createUser', payload)
+      Axios.post('https://worldoraback.dynac.space/api/createUser', payload)
         .then((response) => {
           toast.success('Account created successfully!');
           navigate('/login');

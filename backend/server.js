@@ -50,7 +50,7 @@ app.use('/api', UserRouter);
 module.exports = app;
 
 if (process.env.NODE_ENV !== 'test') {
-  const PORT = process.env.PORT || 3001;
+  const PORT = process.env.PORT || 3013;
   const server = app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
   });

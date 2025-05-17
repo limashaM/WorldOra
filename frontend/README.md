@@ -26,7 +26,7 @@ A modern React application built with React, MongoDB, REST Countries API, and a 
 
 | Category      | Tools Used                          |
 | ------------- | ----------------------------------- |
-| Framework     | React                      |
+| Framework     | React                               |
 | Styling       | Tailwind CSS                        |                     
 | Routing       | React Router DOM (v7)               |
 | Notifications | React Toastify                      |

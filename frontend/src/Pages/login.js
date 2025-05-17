@@ -15,7 +15,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    Axios.post("http://localhost:3001/api/login", { email, password })
+    Axios.post("https://worldoraback.dynac.space/api/login", { email, password })
       .then((response) => {
         const { data } = response;
         console.log(data);

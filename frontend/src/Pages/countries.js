@@ -19,7 +19,6 @@ import logo from "../Assests/logo.png";
 import Toastify from 'toastify-js';
 import "toastify-js/src/toastify.css";
 
-
 const Countries = () => {
   const [countries, setCountries] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
@@ -35,6 +34,20 @@ const Countries = () => {
 
   const navigate = useNavigate();
 
+  // Load favorites from sessionStorage
+  useEffect(() => {
+    const storedFavorites = sessionStorage.getItem("favorites");
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+    fetchAll();
+  }, []);
+
+  // Save favorites to sessionStorage when changed
+  useEffect(() => {
+    sessionStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
   const fetchAll = async () => {
     try {
       const data = await getAllCountries();
@@ -45,10 +58,6 @@ const Countries = () => {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
 
   const handleSearch = async (e) => {
     try {
@@ -106,13 +115,13 @@ const Countries = () => {
   };
 
   const toggleFavorite = (e, countryCode) => {
-
     e.stopPropagation();
-
     if (favorites.includes(countryCode)) {
-      setFavorites(favorites.filter((code) => code !== countryCode));
+      const updated = favorites.filter((code) => code !== countryCode);
+      setFavorites(updated);
     } else {
-      setFavorites([...favorites, countryCode]);
+      const updated = [...favorites, countryCode];
+      setFavorites(updated);
     }
   };
 
@@ -125,17 +134,14 @@ const Countries = () => {
   };
 
   const handleLogout = () => {
-    // Implement logout functionality here
-    // For example: clear local storage, cookies, etc.
     Toastify({
       text: "Logging out...",
-      duration: 3000,  // Show for 3 seconds
-      close: true,     // Enable close button
-      gravity: "top",  // Position at the top of the page
-      position: "right",  // Position on the right side
-      backgroundColor: "#FF5733",  // Custom background color
+      duration: 3000,
+      close: true,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#FF5733",
     }).showToast();
-    // After logout logic, navigate to login page
     navigate("/login");
   };
 
@@ -152,7 +158,7 @@ const Countries = () => {
           <img
             src={logo}
             alt="Worldora Logo"
-            className="h-20 w-auto object-contain" // Increased height to h-20
+            className="h-20 w-auto object-contain"
           />
         </div>
 
@@ -166,6 +172,7 @@ const Countries = () => {
             <span className="text-gray-700 font-medium">Home</span>
           </button>
 
+          {/* Currency Search */}
           <div className="px-4 py-2">
             <div
               onClick={() => setShowCurrencySearch(!showCurrencySearch)}
@@ -176,7 +183,6 @@ const Countries = () => {
                 Search by Currency
               </span>
             </div>
-
             {showCurrencySearch && (
               <div className="pl-8 pr-4 py-2">
                 <input
@@ -190,17 +196,15 @@ const Countries = () => {
             )}
           </div>
 
+          {/* Region Filter */}
           <div className="px-4 py-2">
             <div
               onClick={() => setShowRegionFilter(!showRegionFilter)}
               className="flex items-center w-full px-2 py-3 hover:bg-blue-50 transition-colors cursor-pointer"
             >
               <FaFilter className="text-blue-700 text-xl mr-3" />
-              <span className="text-gray-700 font-medium">
-                Filter by Region
-              </span>
+              <span className="text-gray-700 font-medium">Filter by Region</span>
             </div>
-
             {showRegionFilter && (
               <div className="pl-8 pr-4 py-2">
                 <select
@@ -221,7 +225,7 @@ const Countries = () => {
           </div>
         </div>
 
-        {/* Logout Button at Bottom */}
+        {/* Logout Button */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
           <button
             onClick={handleLogout}
@@ -233,7 +237,7 @@ const Countries = () => {
         </div>
       </div>
 
-      {/* Sidebar Toggle Button */}
+      {/* Sidebar Toggle */}
       <div className="fixed top-5 left-5 z-50">
         <FaSlidersH
           onClick={() => setShowSidebar(!showSidebar)}
@@ -253,7 +257,7 @@ const Countries = () => {
             Journey Through Nations
           </h1>
 
-          {/* Search by country name */}
+          {/* Search */}
           <div className="mt-10 mb-6 flex justify-end w-full">
             {showSearch ? (
               <div className="flex items-center max-w-md bg-white border border-blue-300 rounded-full shadow-md px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-300">
@@ -278,30 +282,25 @@ const Countries = () => {
             )}
           </div>
 
-          {/* A–Z Alphabet Filter */}
+          {/* Alphabet Filter */}
           <div className="flex flex-wrap justify-center items-center gap-4 mb-10">
-            {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-              .split("")
-              .map((letter, index, array) => (
-                <div key={letter} className="flex items-center space-x-4">
-                  <button
-                    onClick={() => handleLetterClick(letter)}
-                    className={`text-xl font-semibold transition duration-200 ${
-                      selectedLetter === letter
-                        ? "text-blue-700 font-bold underline underline-offset-8"
-                        : "text-gray-700 hover:text-blue-500"
-                    }`}
-                  >
-                    {letter}
-                  </button>
-                  {index !== array.length - 1 && (
-                    <span className="text-gray-400 text-xl font-semibold">
-                      |
-                    </span>
-                  )}
-                </div>
-              ))}
-
+            {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter, index, array) => (
+              <div key={letter} className="flex items-center space-x-4">
+                <button
+                  onClick={() => handleLetterClick(letter)}
+                  className={`text-xl font-semibold transition duration-200 ${
+                    selectedLetter === letter
+                      ? "text-blue-700 font-bold underline underline-offset-8"
+                      : "text-gray-700 hover:text-blue-500"
+                  }`}
+                >
+                  {letter}
+                </button>
+                {index !== array.length - 1 && (
+                  <span className="text-gray-400 text-xl font-semibold">|</span>
+                )}
+              </div>
+            ))}
             <button
               onClick={fetchAll}
               className="ml-6 text-base text-gray-500 hover:text-black underline underline-offset-4"
@@ -338,7 +337,6 @@ const Countries = () => {
                   <div className="text-2xl font-bold font-serif text-gray-800 text-center w-full">
                     {country.name?.common}
                   </div>
-
                   <div
                     className="text-xl ml-2 cursor-pointer"
                     onClick={(e) => toggleFavorite(e, country.cca3)}
